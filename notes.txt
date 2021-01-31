@@ -1,0 +1,40 @@
+BUILD libbson
+
+$ sudo apt-get install git cmake
+$ git clone https://github.com/mongodb/mongo-c-driver.git
+$ cd mongo-c-driver/
+$ mkdir cmake-build
+$ cd cmake-build/
+$ cmake -L ..
+$ cmake -DENABLE_AUTOMATIC_INIT_AND_CLEANUP=OFF -DCMAKE_BUILD_TYPE=Release -DENABLE_CLIENT_SIDE_ENCRYPTION=OFF -DENABLE_EXAMPLES=OFF -DENABLE_ICU=OFF -DENABLE_MONGOC=OFF -DENABLE_MONGODB_AWS_AUTH=OFF -DENABLE_SASL=OFF -DENABLE_SHM_COUNTERS=OFF -DENABLE_SNAPPY=OFF -DENABLE_SRV=OFF -DENABLE_SSL=OFF -DENABLE_TESTS=OFF -DENABLE_ZLIB=OFF -DENABLE_ZSTD=OFF ..
+$ make
+$ sudo make install
+$ ls -lh /usr/local/lib/libbson-*
+lrwxrwxrwx 1 root root   16 jan 31 20:14 /usr/local/lib/libbson-1.0.so -> libbson-1.0.so.0
+lrwxrwxrwx 1 root root   20 jan 31 20:14 /usr/local/lib/libbson-1.0.so.0 -> libbson-1.0.so.0.0.0
+-rw-r--r-- 1 root root 246K jan 31 20:11 /usr/local/lib/libbson-1.0.so.0.0.0
+-rw-r--r-- 1 root root 363K jan 31 20:11 /usr/local/lib/libbson-static-1.0.a
+$ ldd /usr/local/lib/libbson-1.0.so.0.0.0 
+        linux-vdso.so.1 (0x00007ffe56cbb000)
+        librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007f1cc06de000)
+        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f1cc055b000)
+        libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f1cc053a000)
+        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f1cc0379000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007f1cc0743000)
+
+TEST libbson
+$ gcc -o hello_bson -I /usr/local/include/libbson-1.0 -lbson-1.0 hello_bson.c
+$ file hello_bson
+hello_bson: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=c9d344e25ebdefecc3a6ff1c303ff03092371d93, not stripped
+$ ls -lh hello_bson
+-rwxr-xr-x 1 lorandi lorandi 17K jan 31 20:30 hello_bson
+$ ldd hello_bson
+        linux-vdso.so.1 (0x00007ffe2b3b0000)
+        libbson-1.0.so.0 => /usr/local/lib/libbson-1.0.so.0 (0x00007fb557c02000)
+        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fb557a41000)
+        librt.so.1 => /lib/x86_64-linux-gnu/librt.so.1 (0x00007fb557a37000)
+        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007fb5578b4000)
+        libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007fb557893000)
+        /lib64/ld-linux-x86-64.so.2 (0x00007fb557c62000)
+$ ./hello_bson                                                                
+{ "hello" : "bson!" }
